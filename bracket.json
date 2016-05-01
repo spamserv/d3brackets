@@ -1,0 +1,44 @@
+var json = 
+{
+    "name": "Base",
+    "children": [
+        {
+            "name": "Type A",
+            "children": [
+                {
+                    "name": "Section 1",
+                    "children": [
+                        {"name": "Child 1"},
+                        {"name": "Child 2"}
+                    ]
+                },
+                {
+                    "name": "Section 2",
+                    "children": [
+                        {"name": "Child 1"},
+                        {"name": "Child 2"}
+                    ]
+                }
+            ]
+        },
+        {
+            "name": "Type B",
+            "children": [
+                {
+                    "name": "Section 1",
+                    "children": [
+                        {"name": "Child 1"},
+                        {"name": "Child 2"}
+                    ]
+                },
+                {
+                    "name": "Section 2",
+                    "children": [
+                        {"name": "Child 1"},
+                        {"name": "Child 2"}
+                    ]
+                }
+            ]
+        }
+    ]
+};

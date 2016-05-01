@@ -1,0 +1,13 @@
+html{
+    font: 10px sans-serif;
+}
+
+svg{
+    border: 1px solid silver;
+}
+
+.link{
+    fill: none;
+    stroke: lightgray;
+    stroke-width: 1.5px;
+}
