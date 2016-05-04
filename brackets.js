@@ -43,11 +43,13 @@ var json =
     ]
 };
 
-var width = 700;
+var width = 1000;
 var height = 650;
 var maxLabel = 150;
 var duration = 1000;
-var radius = 5;
+var radius = 20;
+var rec_height = 20;
+var rec_width = 120;
     
 var i = 0;
 var root;
@@ -59,11 +61,11 @@ var diagonal = d3.svg.diagonal()
     .projection(function(d) { return [d.y, d.x]; });
 
 var elbow = function (d, i){
-  var source = d.source;
-  var target = d.target;
-  var hy = (target.y-source.y)/2;
-  if(d.isRight) hy = -hy;
-  return "M" + source.y + "," + source.x
+    var source = d.source;
+    var target = d.target;
+    var hy = (target.y-source.y)/2;
+    if(d.isRight) hy = -hy;
+    return "M" + source.y + "," + source.x
          + "H" + (source.y+hy)
          + "V" + target.x + "H" + target.y;
 };
@@ -89,7 +91,8 @@ function update(source)
     var links = tree.links(nodes);
 
     // Normalize for fixed-depth.
-    nodes.forEach(function(d) { d.y = d.depth * maxLabel; });
+    //nodes.forEach(function(d) { d.y = d.depth * maxLabel; });
+    nodes.forEach(function(d) { d.y = 500 - (d.depth * maxLabel); });
 
     // Update the nodes…
     var node = svg.selectAll("g.node")
@@ -101,13 +104,14 @@ function update(source)
     var nodeEnter = node.enter()
         .append("g")
         .attr("class", "node")
-        .attr("transform", function(d){ return "translate(" + source.y0 + "," + source.x0 + ")"; })
+        .attr("transform", function(d,i){ return "translate(" + source.y0 + "," + source.x0 + ")"; })
         .on("click", click);
 
-    nodeEnter.append("circle")
-        .attr("r", 0)
+    nodeEnter.append("rect")
+        .attr("width", 0)
+        .attr("height", 0)
         .style("fill", function(d){ 
-            return d._children ? "lightsteelblue" : "black"; 
+            return d._children ? "lightsteelblue" : "none"; 
         });
 
     nodeEnter.append("text")
@@ -115,19 +119,21 @@ function update(source)
             var spacing = computeRadius(d) + 5;
             return d.children || d._children ? -spacing : spacing; 
         })
-        .attr("dy", "30")
-        .attr("text-anchor", function(d){ return d.children || d._children ? "end" : "start"; })
+        .attr("dy", "20")
+        .attr("text-anchor", function(d){ return d.children || d._children ? "start" : "end"; })
         .text(function(d){ return d.name; })
         .style("fill-opacity", 0);
 
     // Transition nodes to their new position.
     var nodeUpdate = node.transition()
         .duration(duration)
-        .attr("transform", function(d) { return "translate(" + d.y + "," + d.x + ")"; });
+        .attr("transform", function(d) { return "translate(" + d.y + "," + (d.x - 10) + ")"; });
 
-    nodeUpdate.select("circle")
-        .attr("r", function(d){ return computeRadius(d); })
-        .style("fill", function(d) { return d._children ? "lightsteelblue" : "black"; });
+    nodeUpdate.select("rect")
+        .attr("height", rec_height)
+        .attr("width", rec_width)
+        .style("fill", function(d) { return d._children ? "lightsteelblue" : "green"; })
+        .style("fill-opacity","0.3");
 
     nodeUpdate.select("text").style("fill-opacity", 1);
 
@@ -137,7 +143,8 @@ function update(source)
         .attr("transform", function(d) { return "translate(" + source.y + "," + source.x + ")"; })
         .remove();
 
-    nodeExit.select("circle").attr("r", 0);
+    nodeExit.select("rect").attr("height", 0);
+    nodeExit.select("rect").attr("width", 0);
     nodeExit.select("text").style("fill-opacity", 0);
 
     // Update the links…
@@ -176,7 +183,7 @@ function update(source)
 function computeRadius(d)
 {
 	//console.log(d);
-    if(d.children || d._children) return radius + (radius * nbEndNodes(d) / 10);
+    if(d.children || d._children) return radius + (radius * 1 / 10);
     else return radius;
 }
 
@@ -185,9 +192,7 @@ function nbEndNodes(n)
     nb = 0;    
     if(n.children){
         n.children.forEach(function(c){ 
-        	console.log(c);
             nb += nbEndNodes(c); 
-            console.log(nb);
         });
     }
     else if(n._children){
@@ -214,10 +219,10 @@ function click(d)
 }
 
 function collapse(d){
-    if (d.children){
-        d._children = d.children;
-        d._children.forEach(collapse);
-        d.children = null;
+    if (d._children){
+        d.children = d._children;
+        d.children.forEach(collapse);
+        d._children = null;
     }
 }
 
