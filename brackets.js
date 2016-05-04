@@ -117,9 +117,9 @@ function update(source)
     nodeEnter.append("text")
         .attr("x", function(d){ 
             var spacing = computeRadius(d) + 5;
-            return d.children || d._children ? -spacing : spacing; 
+            return d.children || d._children ? -spacing + 70 : spacing + 70; 
         })
-        .attr("dy", "20")
+        .attr("dy", "13")
         .attr("text-anchor", function(d){ return d.children || d._children ? "start" : "end"; })
         .text(function(d){ return d.name; })
         .style("fill-opacity", 0);
