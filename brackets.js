@@ -58,6 +58,18 @@ var tree = d3.layout.tree()
 var diagonal = d3.svg.diagonal()
     .projection(function(d) { return [d.y, d.x]; });
 
+var elbow = function (d, i){
+  var source = d.source;
+  var target = d.target;
+  var hy = (target.y-source.y)/2;
+  if(d.isRight) hy = -hy;
+  return "M" + source.y + "," + source.x
+         + "H" + (source.y+hy)
+         + "V" + target.x + "H" + target.y;
+};
+
+var connector = elbow;
+
 var svg = d3.select("body").append("svg")
     .attr("width", width)
     .attr("height", height)
@@ -95,7 +107,7 @@ function update(source)
     nodeEnter.append("circle")
         .attr("r", 0)
         .style("fill", function(d){ 
-            return d._children ? "lightsteelblue" : "white"; 
+            return d._children ? "lightsteelblue" : "black"; 
         });
 
     nodeEnter.append("text")
@@ -115,7 +127,7 @@ function update(source)
 
     nodeUpdate.select("circle")
         .attr("r", function(d){ return computeRadius(d); })
-        .style("fill", function(d) { return d._children ? "lightsteelblue" : "#fff"; });
+        .style("fill", function(d) { return d._children ? "lightsteelblue" : "black"; });
 
     nodeUpdate.select("text").style("fill-opacity", 1);
 
@@ -137,20 +149,20 @@ function update(source)
         .attr("class", "link")
         .attr("d", function(d){
             var o = {x: source.x0, y: source.y0};
-            return diagonal({source: o, target: o});
+            return connector({source: o, target: o});
         });
 
     // Transition links to their new position.
     link.transition()
         .duration(duration)
-        .attr("d", diagonal);
+        .attr("d", connector);
 
     // Transition exiting nodes to the parent's new position.
     link.exit().transition()
         .duration(duration)
         .attr("d", function(d){
             var o = {x: source.x, y: source.y};
-            return diagonal({source: o, target: o});
+            return connector({source: o, target: o});
         })
         .remove();
 
