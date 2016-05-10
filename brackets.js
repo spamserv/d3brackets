@@ -45,11 +45,11 @@ var json =
 
 var width = 1000;
 var height = 650;
-var maxLabel = 150;
+var maxLabel = 200;
 var duration = 1000;
 var radius = 20;
 var rec_height = 20;
-var rec_width = 120;
+var rec_width = 100;
     
 var i = 0;
 var root;
@@ -64,7 +64,6 @@ var elbow = function (d, i){
     var source = d.source;
     var target = d.target;
     var hy = (target.y-source.y)/2;
-    if(d.isRight) hy = -hy;
     return "M" + source.y + "," + source.x
          + "H" + (source.y+hy)
          + "V" + target.x + "H" + target.y;
@@ -79,7 +78,7 @@ var svg = d3.select("body").append("svg")
         .attr("transform", "translate(" + maxLabel + ",0)");
 
 root = json;
-root.x0 = height / 2;
+root.x0 = height / 3;
 root.y0 = 0;
 
 root.children.forEach(collapse);
@@ -116,8 +115,7 @@ function update(source)
 
     nodeEnter.append("text")
         .attr("x", function(d){ 
-            var spacing = computeRadius(d) + 5;
-            return d.children || d._children ? -spacing + 70 : spacing + 70; 
+            return d.children || d._children ? -radius + 70 : radius + 70; 
         })
         .attr("dy", "13")
         .attr("text-anchor", function(d){ return d.children || d._children ? "start" : "end"; })
@@ -133,7 +131,7 @@ function update(source)
         .attr("height", rec_height)
         .attr("width", rec_width)
         .style("fill", function(d) { return d._children ? "lightsteelblue" : "green"; })
-        .style("fill-opacity","0.3");
+        .style("fill-opacity","0.7");
 
     nodeUpdate.select("text").style("fill-opacity", 1);
 
@@ -185,6 +183,11 @@ function computeRadius(d)
 	//console.log(d);
     if(d.children || d._children) return radius + (radius * 1 / 10);
     else return radius;
+}
+
+function izracunajVelicinu(d) {
+
+
 }
 
 function nbEndNodes(n)
