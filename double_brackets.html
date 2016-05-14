@@ -40,29 +40,78 @@ json = {
     {
       "name": "Winner Left 1",
       "winners": [
-        {"name": "Winner Left 3"},
-        {"name": "Winner Left 4"}
+        {
+          "name": "Winner Left 3",
+          "winners": [
+            {
+              "name": "Winner Left 3"},
+            {"name": "Winner Left 4"}
+          ]
+        },
+        {
+          "name": "Winner Left 4",
+          "winners": [
+            {"name": "Winner Left 3"},
+            {"name": "Winner Left 4"}
+          ]
+        }
       ]
     },
     {"name": "Winner Left 2",
     "winners": [
-        {"name": "Winner Left 3"},
-        {"name": "Winner Left 4"}
+        {
+          "name": "Winner Left 5",
+          "winners": [
+            {"name": "Winner Left 3"},
+            {"name": "Winner Left 4"}
+          ]
+        },
+        {
+          "name": "Winner Left 6",
+          "winners": [
+            {"name": "Winner Left 3"},
+            {"name": "Winner Left 4"}
+          ]
+        }
       ]}
   ],
   "challengers": [
     {
       "name": "Challenger Right 1",
       "challengers": [
-        {"name": "Challenger Right 3"},
-        {"name": "Challenger Right 4"}
+        {
+          "name": "Challenger Right 3",
+          "challengers": [
+            {"name": "Winner Left 3"},
+            {"name": "Winner Left 4"}
+          ]
+        },
+        {
+          "name": "Challenger Right 4",
+          "challengers": [
+            {"name": "Winner Left 3"},
+            {"name": "Winner Left 4"}
+          ]
+        }
       ]
     },
     {
       "name": "Challenger Right 2",
       "challengers": [
-        {"name": "Challenger Right 5"},
-        {"name": "Challenger Right 6"}
+        {
+          "name": "Challenger Right 5",
+          "challengers": [
+            {"name": "Winner Left 3"},
+            {"name": "Winner Left 4"}
+          ]
+        },
+        {
+          "name": "Challenger Right 6",
+          "challengers": [
+            {"name": "Winner Left 3"},
+            {"name": "Winner Left 4"}
+          ]
+        }
       ]
     }
   ]
@@ -72,6 +121,7 @@ var margin = {top: 30, right: 10, bottom: 10, left: 10},
     width = 960 - margin.left - margin.right,
     halfWidth = width / 2,
     height = 500 - margin.top - margin.bottom,
+    halfHeight = height / 2,
     i = 0,
     duration = 500,
     rec_height = 20,
@@ -82,36 +132,43 @@ var margin = {top: 30, right: 10, bottom: 10, left: 10},
     root;
 
 var getChildren = function(d){
-      var a = [];
-      if(d.winners) for(var i = 0; i < d.winners.length; i++){
-        d.winners[i].isRight = false;
-        d.winners[i].parent = d;
-        a.push(d.winners[i]);
-      }
-      if(d.challengers) for(var i = 0; i < d.challengers.length; i++){
-        d.challengers[i].isRight = true;
-        d.challengers[i].parent = d;
-        a.push(d.challengers[i]);
-      }
-      return a.length?a:null;
-    }
-    ;
+  var a = [];
+  if(d.winners) for(var i = 0; i < d.winners.length; i++){
+    d.winners[i].isRight = false;
+    d.winners[i].parent = d;
+    a.push(d.winners[i]);
+  }
+  if(d.challengers) for(var i = 0; i < d.challengers.length; i++){
+    d.challengers[i].isRight = true;
+    d.challengers[i].parent = d;
+    a.push(d.challengers[i]);
+  }
+  return a.length?a:null;
+}
+;
 
 var tree = d3.layout.tree()
-    .size([height, width])
-    ;
+    .size([height, width]);
 
 var diagonal = d3.svg.diagonal()
     .projection(function(d) { return [d.y, d.x]; });
+
 var elbow = function (d, i){
-      var source = calcLeft(d.source);
-      var target = calcLeft(d.target);
-      var hy = (target.y-source.y)/2;
-      if(d.isRight) hy = -hy;
-      return "M" + source.y + "," + source.x
-             + "H" + (source.y+hy)
-             + "V" + target.x + "H" + target.y;
-    };
+  var source = calcLeft(d.source);
+  var target = calcLeft(d.target);
+  var hy = (target.y-source.y)/2;
+
+  console.log("Source.y:"+source.x);
+  console.log("Source.x:"+source.y);
+  console.log("Target.x:"+target.y);
+  console.log("Target.y:"+target.x)
+  console.log("HY:"+hy);
+  console.log("------------");
+  if(d.isRight) hy = -hy;
+  return "M" + source.y + "," + source.x
+         + "H" + (source.y+hy)
+         + "V" + target.x + "H" + target.y;
+};
 var connector = elbow;
 
 var calcLeft = function(d){
@@ -121,7 +178,7 @@ var calcLeft = function(d){
     l = halfWidth - l;
   }
   
-  return {x : d.x, y : l};
+  return {x : d.x/2, y : l};
 };
 
 var vis = d3.select("#chart").append("svg")
@@ -132,7 +189,8 @@ var vis = d3.select("#chart").append("svg")
 
 var toArray = function(item, arr){
   arr = arr || [];
-  var i = 0, l = item.children?item.children.length:0;
+  var i = 0, 
+  l = item.children ? item.children.length : 0;
   arr.push(item);
   for(; i < l; i++){
     toArray(item.children[i], arr);
@@ -162,7 +220,7 @@ function update(source) {
   var nodes = toArray(source);
 
   // Normalize for fixed-depth.
-  nodes.forEach(function(d) { d.y = d.depth * 180 + halfWidth; });
+  nodes.forEach(function(d) { d.y = d.depth * 115 + halfWidth;});
 
   // Update the nodes…
   var node = vis.selectAll("g.node")
