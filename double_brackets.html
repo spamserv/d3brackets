@@ -1,40 +1,10 @@
 <!DOCTYPE html>
 <html>
-  <head>
-    <meta http-equiv="Content-Type" content="text/html;charset=utf-8">
-    <title>Node-Link Tree</title>
-    <script src="http://d3js.org/d3.v2.js"></script>
-    <style type="text/css">
-
-.node circle {
-  cursor: pointer;
-  fill: #fff;
-  stroke: steelblue;
-  stroke-width: 1.5px;
-}
-
-.node rect {
-  fill: black;
-  stroke: steelblue;
-  stroke-width: 1.5px;
-}
-.node text {
-  font: 10px sans-serif;
-}
-
-path.link {
-  fill: none;
-  stroke: #ccc;
-  stroke-width: 1.5px;
-}
-
-#chart {
-  margin: auto;
-      top: 50%;
-    left: 50%;
-}
-
-</style>
+<head>
+  <meta http-equiv="Content-Type" content="text/html;charset=utf-8">
+  <title>Node-Link Tree</title>
+  <script src="http://d3js.org/d3.v2.js"></script>
+  <link rel="stylesheet" type="text/css" href="double_brackets.css">
 
 </head>
 <body>
@@ -43,7 +13,6 @@ path.link {
 </center>
 
 <script type="text/javascript">
-
 
 var margin = {top: 30, right: 10, bottom: 10, left: 10},
     width = 1060 - margin.left - margin.right,
@@ -153,11 +122,10 @@ function update(source) {
   // Normalize for fixed-depth.
   nodes.forEach(function(d,i) { 
     if(d.winner) console.log(d);
-    if(d.finalist) {
+    // Place finalists nodes different from others (they're not placed on halfheight)
       d.y = d.depth * 110 + halfWidth - 30;
       if(d.isRight){
         d.x = height/2 - 60 ;
-        console.log(d.depth);
       }
       else{
         d.x = height/2 + 60;
