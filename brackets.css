@@ -11,3 +11,8 @@ svg{
     stroke: black;
     stroke-width: 1.5px;
 }
+
+#chart {
+	position: absolute;
+  	margin: auto;
+}

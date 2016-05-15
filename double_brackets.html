@@ -3,7 +3,7 @@
   <head>
     <meta http-equiv="Content-Type" content="text/html;charset=utf-8">
     <title>Node-Link Tree</title>
-    <script src="http://mbostock.github.com/d3/d3.v2.js"></script>
+    <script src="http://d3js.org/d3.v2.js"></script>
     <style type="text/css">
 
 .node circle {
@@ -28,97 +28,25 @@ path.link {
   stroke-width: 1.5px;
 }
 
-    </style>
-  </head>
-  <body>
-    <div id="chart"></div>
-    <script type="text/javascript">
+#chart {
+  margin: auto;
+      top: 50%;
+    left: 50%;
+}
 
-json = {
-  "name": "Overall Winner",
-  "winners": [
-    {
-      "name": "Winner Left 1",
-      "winners": [
-        {
-          "name": "Winner Left 3",
-          "winners": [
-            {
-              "name": "Winner Left 3"},
-            {"name": "Winner Left 4"}
-          ]
-        },
-        {
-          "name": "Winner Left 4",
-          "winners": [
-            {"name": "Winner Left 3"},
-            {"name": "Winner Left 4"}
-          ]
-        }
-      ]
-    },
-    {"name": "Winner Left 2",
-    "winners": [
-        {
-          "name": "Winner Left 5",
-          "winners": [
-            {"name": "Winner Left 3"},
-            {"name": "Winner Left 4"}
-          ]
-        },
-        {
-          "name": "Winner Left 6",
-          "winners": [
-            {"name": "Winner Left 3"},
-            {"name": "Winner Left 4"}
-          ]
-        }
-      ]}
-  ],
-  "challengers": [
-    {
-      "name": "Challenger Right 1",
-      "challengers": [
-        {
-          "name": "Challenger Right 3",
-          "challengers": [
-            {"name": "Winner Left 3"},
-            {"name": "Winner Left 4"}
-          ]
-        },
-        {
-          "name": "Challenger Right 4",
-          "challengers": [
-            {"name": "Winner Left 3"},
-            {"name": "Winner Left 4"}
-          ]
-        }
-      ]
-    },
-    {
-      "name": "Challenger Right 2",
-      "challengers": [
-        {
-          "name": "Challenger Right 5",
-          "challengers": [
-            {"name": "Winner Left 3"},
-            {"name": "Winner Left 4"}
-          ]
-        },
-        {
-          "name": "Challenger Right 6",
-          "challengers": [
-            {"name": "Winner Left 3"},
-            {"name": "Winner Left 4"}
-          ]
-        }
-      ]
-    }
-  ]
-};
+</style>
+
+</head>
+<body>
+<center>
+  <div id="chart"></div>
+</center>
+
+<script type="text/javascript">
+
 
 var margin = {top: 30, right: 10, bottom: 10, left: 10},
-    width = 960 - margin.left - margin.right,
+    width = 1060 - margin.left - margin.right,
     halfWidth = width / 2,
     height = 500 - margin.top - margin.bottom,
     halfHeight = height / 2,
@@ -130,6 +58,7 @@ var margin = {top: 30, right: 10, bottom: 10, left: 10},
     half_rec_height = rec_height/2,
     half_rec_width = rec_width/2,
     root;
+    first_update = false;
 
 var getChildren = function(d){
   var a = [];
@@ -144,8 +73,7 @@ var getChildren = function(d){
     a.push(d.challengers[i]);
   }
   return a.length?a:null;
-}
-;
+};
 
 var tree = d3.layout.tree()
     .size([height, width]);
@@ -157,17 +85,18 @@ var elbow = function (d, i){
   var source = calcLeft(d.source);
   var target = calcLeft(d.target);
   var hy = (target.y-source.y)/2;
-
-  console.log("Source.y:"+source.x);
-  console.log("Source.x:"+source.y);
-  console.log("Target.x:"+target.y);
-  console.log("Target.y:"+target.x)
-  console.log("HY:"+hy);
-  console.log("------------");
   if(d.isRight) hy = -hy;
+  if(d.target.finalist) {
+    console.log(d);
+    return "M" + source.y + "," + source.x
+         + "H" + (source.y)
+         + "V" + target.x + "H" + target.y;
+
+  } else {
   return "M" + source.y + "," + source.x
          + "H" + (source.y+hy)
          + "V" + target.x + "H" + target.y;
+       }
 };
 var connector = elbow;
 
@@ -184,7 +113,7 @@ var calcLeft = function(d){
 var vis = d3.select("#chart").append("svg")
     .attr("width", width + margin.right + margin.left)
     .attr("height", height + margin.top + margin.bottom)
-  .append("g")
+    .append("g")
     .attr("transform", "translate(" + margin.left + "," + margin.top + ")");
 
 var toArray = function(item, arr){
@@ -198,6 +127,7 @@ var toArray = function(item, arr){
   return arr;
 };
 
+d3.json("bracket.json", function(json) {
 root = json;
 root.x0 = height / 2;
 root.y0 = width / 2;
@@ -214,13 +144,29 @@ var rebuildChildren = function(node){
 rebuildChildren(root);
 root.isRight = false;
 update(root);
+});
 
 function update(source) {
   // Compute the new tree layout.
   var nodes = toArray(source);
 
   // Normalize for fixed-depth.
-  nodes.forEach(function(d) { d.y = d.depth * 115 + halfWidth;});
+  nodes.forEach(function(d,i) { 
+    if(d.winner) console.log(d);
+    if(d.finalist) {
+      d.y = d.depth * 110 + halfWidth - 30;
+      if(d.isRight){
+        d.x = height/2 - 60 ;
+        console.log(d.depth);
+      }
+      else{
+        d.x = height/2 + 60;
+      }
+    }
+    else {
+      d.y = d.depth * 110 + halfWidth;}
+    }
+  );
 
   // Update the nodes…
   var node = vis.selectAll("g.node")
@@ -264,9 +210,6 @@ function update(source) {
       .attr("transform", function(d) { p = calcLeft(d.parent||source); return "translate(" + p.y + "," + p.x + ")"; })
       .remove();
 
-  nodeExit.select("rect")
-      .attr("r", 1e-6);
-
   nodeExit.select("text")
       .style("fill-opacity", 1e-6);
 
@@ -277,10 +220,7 @@ function update(source) {
   // Enter any new links at the parent's previous position.
   link.enter().insert("path", "g")
       .attr("class", "link")
-      .attr("d", function(d) {
-        var o = {x: source.x0, y: source.y0};
-        return connector({source: o, target: o});
-      });
+      .attr("d", diagonal);
 
   // Transition links to their new position.
   link.transition()
@@ -304,6 +244,8 @@ function update(source) {
     d.x0 = p.x;
     d.y0 = p.y;
   });
+
+
   
   // Toggle children on click.
   function click(d) {
