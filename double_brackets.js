@@ -13,7 +13,8 @@ var margin = {top: 30, right: 10, bottom: 10, left: 10},
     half_rec_width = rec_width/2,
     root;
     first_update = false,
-    steam_ids = [];
+    steam_ids = [],
+    steamaccounts = [];
 
 var getChildren = function(d){
   var a = [];
@@ -44,7 +45,6 @@ var elbow = function (d, i){
   var hy = (target.y-source.y)/2;
   if(d.isRight) hy = -hy;
   if(d.target.finalist) {
-    console.log(d);
     return "M" + source.y + "," + source.x
          + "H" + (source.y)
          + "V" + target.x + "H" + target.y;
@@ -101,9 +101,9 @@ d3.json("bracket.json", function(json) {
   rebuildChildren(root);
   root.isRight = false;
   update(root);
-  console.log(steam_ids);
   socket.emit('steam info', steam_ids, function(steam_accounts){
-    console.log(steam_accounts);
+    steamaccounts = steam_accounts;
+    console.log(steamaccounts);
   });
 });
 
@@ -133,13 +133,32 @@ function update(source) {
   var node = vis.selectAll("g.node")
       .data(nodes, function(d) { return d.id || (d.id = ++i); });
 
+  var tooltip = d3.select("#tooltip");
+
   // Enter any new nodes at the parent's previous position.
   var nodeEnter = node.enter().append("g")
       .attr("class", "node")
       .attr("transform", function(d) { return "translate(" + source.y0 + "," + source.x0 + ")"; })
       .on("click", click)
-      .on("mouseover", mouseover)
-      .on("mouseout", mouseout);
+      .on("mouseover", function(d,i){ 
+        tooltip.style("visibility", "visible")
+          .select("img")
+          .attr("src", steamaccounts[i].avatarmedium);
+
+        tooltip.select("#steam-personaname")
+          .text("Steam nickname: " + steamaccounts[i].personaname);
+
+        tooltip.select("#steam-username")
+          .text(steamaccounts[i].profileurl);
+
+        tooltip.select("#steam-last-login")
+          .text("Last login: " + steamaccounts[i].lastlogoff);
+
+      })
+      .on("mousemove", function(){
+        return tooltip.style("top", (d3.event.pageY-10)+"px").style("left",(d3.event.pageX+10)+"px");
+      })
+      .on("mouseout", function(){return tooltip.style("visibility", "hidden");});
 
   nodeEnter.append("rect")
       .attr("transform", "translate("+(-half_rec_width)+","+(-half_rec_height)+")")
@@ -161,8 +180,7 @@ function update(source) {
   // Transition nodes to their new position.
   var nodeUpdate = node.transition()
       .duration(duration)
-      .attr("transform", function(d) { p = calcLeft(d); return "translate(" + p.y + "," + p.x + ")"; })
-      ;
+      .attr("transform", function(d) { p = calcLeft(d); return "translate(" + p.y + "," + p.x + ")"; });
 
   nodeUpdate.select("rect")
       .attr("height", rec_height)
@@ -227,11 +245,4 @@ function update(source) {
     update(source);
   }
 
-  function mouseover(d) {
-    console.log(d.steam_id);
-  }
-
-  function mouseout(d) {
-    console.log("izasao");
-  }
 }

@@ -17,7 +17,7 @@ io.on('connection', function (socket){
 		steamClient.getPlayerSummaries({
 		  steamids: steam_ids,
 		  callback: function(err, data) {
-		    console.log(data.response.players);
+		    callback(data.response.players);
 		  }
 		});
 		
