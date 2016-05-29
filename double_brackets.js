@@ -1,3 +1,4 @@
+var socket = io('http://localhost:8081');
 var margin = {top: 30, right: 10, bottom: 10, left: 10},
     width = 1060 - margin.left - margin.right,
     halfWidth = width / 2,
@@ -11,7 +12,8 @@ var margin = {top: 30, right: 10, bottom: 10, left: 10},
     half_rec_height = rec_height/2,
     half_rec_width = rec_width/2,
     root;
-    first_update = false;
+    first_update = false,
+    steam_ids = [];
 
 var getChildren = function(d){
   var a = [];
@@ -19,11 +21,13 @@ var getChildren = function(d){
     d.winners[i].isRight = false;
     d.winners[i].parent = d;
     a.push(d.winners[i]);
+    steam_ids.push(d.winners[i].steam_id);
   }
   if(d.challengers) for(var i = 0; i < d.challengers.length; i++){
     d.challengers[i].isRight = true;
     d.challengers[i].parent = d;
     a.push(d.challengers[i]);
+    steam_ids.push(d.challengers[i].steam_id);
   }
   return a.length?a:null;
 };
@@ -81,22 +85,26 @@ var toArray = function(item, arr){
 };
 
 d3.json("bracket.json", function(json) {
-root = json;
-root.x0 = height / 2;
-root.y0 = width / 2;
+  root = json;
+  root.x0 = height / 2;
+  root.y0 = width / 2;
 
-var t1 = d3.layout.tree().size([height, halfWidth]).children(function(d){return d.winners;}),
-    t2 = d3.layout.tree().size([height, halfWidth]).children(function(d){return d.challengers;});
-t1.nodes(root);
-t2.nodes(root);
+  var t1 = d3.layout.tree().size([height, halfWidth]).children(function(d){return d.winners;}),
+      t2 = d3.layout.tree().size([height, halfWidth]).children(function(d){return d.challengers;});
+  t1.nodes(root);
+  t2.nodes(root);
 
-var rebuildChildren = function(node){
-  node.children = getChildren(node);
-  if(node.children) node.children.forEach(rebuildChildren);
-}
-rebuildChildren(root);
-root.isRight = false;
-update(root);
+  var rebuildChildren = function(node){
+    node.children = getChildren(node);
+    if(node.children) node.children.forEach(rebuildChildren);
+  }
+  rebuildChildren(root);
+  root.isRight = false;
+  update(root);
+  console.log(steam_ids);
+  socket.emit('steam info', steam_ids, function(steam_accounts){
+    console.log(steam_accounts);
+  });
 });
 
 function update(source) {
@@ -129,7 +137,9 @@ function update(source) {
   var nodeEnter = node.enter().append("g")
       .attr("class", "node")
       .attr("transform", function(d) { return "translate(" + source.y0 + "," + source.x0 + ")"; })
-      .on("click", click);
+      .on("click", click)
+      .on("mouseover", mouseover)
+      .on("mouseout", mouseout);
 
   nodeEnter.append("rect")
       .attr("transform", "translate("+(-half_rec_width)+","+(-half_rec_height)+")")
@@ -142,6 +152,11 @@ function update(source) {
       .attr("text-anchor", "middle")
       .text(function(d) { return d.name; })
       .style("fill-opacity", 1e-6);
+
+  nodeEnter.append("text")
+      .attr("display","none")
+      .attr("class","steam-id")
+      .text(function(d) { return d.steam_id; });
 
   // Transition nodes to their new position.
   var nodeUpdate = node.transition()
@@ -210,5 +225,13 @@ function update(source) {
       d._children = null;
     }
     update(source);
+  }
+
+  function mouseover(d) {
+    console.log(d.steam_id);
+  }
+
+  function mouseout(d) {
+    console.log("izasao");
   }
 }
