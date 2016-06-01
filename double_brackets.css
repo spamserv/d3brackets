@@ -1,13 +1,11 @@
-.node circle {
-  cursor: pointer;
-  fill: #fff;
-  stroke: steelblue;
-  stroke-width: 1.5px;
+@font-face {
+    font-family: myfont;
+    src: url(static/MYRIADPRO-REGULAR.otf);
 }
 
 .node rect {
   fill: black;
-  stroke: steelblue;
+  stroke: black;
   stroke-width: 1.5px;
 }
 .node text {
@@ -31,35 +29,40 @@ path.link {
   z-index: 10;
   visibility: hidden;
   height: 150px;
-  width: 300px;
-  border: 1px solid black;
-  font-size:13px;
+  width: 350px;
+  border-radius: 10px;
+  border: 2px solid black;
+  padding:5px;
+  font-size:14px;
+  color: #88818A;
+  background:url(
+    data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAQAAAAECAYAAACp8Z5+AAAAKUlEQVQIW2OUk5H/zwAFj548ZGCECYA4cjLyEAEYB6SQkYGB4T9IBgYALM8ODPV7X0wAAAAASUVORK5CYII=
+    ) repeat;
 }
 
 #steam-img {
-  position:absolute;
+  position:relative;
+  float:left;
   height:64px;
   width:64px;
-  border: 1px solid black;
-  left: 3px;
-  top: 3px;
+  border-radius: 10px;
+  border: 2px solid #88818A;
+  margin-right:5px;
 }
 
-#steam-personaname {
-  position:absolute;
-  top: 3px;
-  left: 72px;
-}
-
-#steam-username {
-  position:absolute;
-  top: 20px;
-  left: 72px;
+#steam-info {
+  position:relative;
+  float:left;
+  align:left;
+  text-align:left !important;
+  font-size:14px;
+  font-family:myfont;
 }
 
 #steam-last-login {
   position:absolute;
-  top: 37px;
-  left: 72px;
-
+  bottom:0;
+  right:0;
+  font-size:12px;
+  font-family:myfont;
 }

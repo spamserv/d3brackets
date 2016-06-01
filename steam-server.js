@@ -20,6 +20,9 @@ io.on('connection', function (socket){
 		    callback(data.response.players);
 		  }
 		});
-		
+	});
+
+	socket.on('get steam account info', function(steam_id){
+		console.log(steam_id);
 	});
 });

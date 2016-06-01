@@ -139,20 +139,23 @@ function update(source) {
   var nodeEnter = node.enter().append("g")
       .attr("class", "node")
       .attr("transform", function(d) { return "translate(" + source.y0 + "," + source.x0 + ")"; })
-      .on("click", click)
+      //.on("click", click)
+      .on("click",showAccountStats)
       .on("mouseover", function(d,i){ 
+        date = timeSince(new Date(steamaccounts[i].lastlogoff*1000));
+
         tooltip.style("visibility", "visible")
           .select("img")
           .attr("src", steamaccounts[i].avatarmedium);
 
         tooltip.select("#steam-personaname")
-          .text("Steam nickname: " + steamaccounts[i].personaname);
+          .text(steamaccounts[i].personaname);
 
         tooltip.select("#steam-username")
           .text(steamaccounts[i].profileurl);
 
         tooltip.select("#steam-last-login")
-          .text("Last login: " + steamaccounts[i].lastlogoff);
+          .text("Last login: " + date);
 
       })
       .on("mousemove", function(){
@@ -243,6 +246,40 @@ function update(source) {
       d._children = null;
     }
     update(source);
+  }
+
+  function timeSince(date) {
+
+    var seconds = Math.floor((new Date() - date) / 1000);
+
+    var interval = Math.floor(seconds / 31536000);
+
+    if (interval > 1) {
+        return interval + " years ago";
+    }
+    interval = Math.floor(seconds / 2592000);
+    if (interval > 1) {
+        return interval + " months ago";
+    }
+    interval = Math.floor(seconds / 86400);
+    if (interval > 1) {
+        return interval + " days ago";
+    }
+    interval = Math.floor(seconds / 3600);
+    if (interval > 1) {
+        return interval + " hours ago";
+    }
+    interval = Math.floor(seconds / 60);
+    if (interval > 1) {
+        return interval + " minutes ago";
+    }
+    return Math.floor(seconds) + " seconds ago";
+  }
+
+  function showAccountStats(d) {
+    socket.emit('get steam account info', d.steam_id, function(steam_info){
+      console.log(steam_info);
+    });
   }
 
 }
