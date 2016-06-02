@@ -142,17 +142,19 @@ function update(source) {
       //.on("click", click)
       .on("click",showAccountStats)
       .on("mouseover", function(d,i){ 
-        date = timeSince(new Date(steamaccounts[i].lastlogoff*1000));
+        steamacc = findInArrayOfJSONObjects(steamaccounts, d.steam_id);
+        console.log(steamacc);
+        date = timeSince(new Date(steamacc.lastlogoff*1000));
 
         tooltip.style("visibility", "visible")
           .select("img")
-          .attr("src", steamaccounts[i].avatarmedium);
+          .attr("src", steamacc.avatarmedium);
 
         tooltip.select("#steam-personaname")
-          .text(steamaccounts[i].personaname);
+          .text(steamacc.personaname);
 
-        tooltip.select("#steam-username")
-          .text(steamaccounts[i].profileurl);
+        tooltip.select("#steam-id32")
+          .text(steamacc.steamid);
 
         tooltip.select("#steam-last-login")
           .text("Last login: " + date);
@@ -173,12 +175,13 @@ function update(source) {
       .attr("dy", 3)
       .attr("text-anchor", "middle")
       .text(function(d) { return d.name; })
-      .style("fill-opacity", 1e-6);
+      .style("fill-opacity", 1e-6)
 
   nodeEnter.append("text")
       .attr("display","none")
       .attr("class","steam-id")
-      .text(function(d) { return d.steam_id; });
+      .text(function(d,i) {return d.steam_id; });
+
 
   // Transition nodes to their new position.
   var nodeUpdate = node.transition()
@@ -249,7 +252,6 @@ function update(source) {
   }
 
   function timeSince(date) {
-
     var seconds = Math.floor((new Date() - date) / 1000);
 
     var interval = Math.floor(seconds / 31536000);
@@ -278,8 +280,14 @@ function update(source) {
 
   function showAccountStats(d) {
     socket.emit('get steam account info', d.steam_id, function(steam_info){
-      console.log(steam_info);
     });
   }
 
+  function findInArrayOfJSONObjects(array,steam_id) {
+    for (x in array) {
+      if (array[x].steamid == steam_id) {
+          return array[x];
+      }
+    }
+  }
 }
