@@ -11,8 +11,7 @@ var margin = {top: 30, right: 10, bottom: 10, left: 10},
     score_width = 20,
     half_rec_height = rec_height/2,
     half_rec_width = rec_width/2,
-    root;
-    first_update = false,
+    root,
     steam_ids = [],
     steamaccounts = [];
 
@@ -64,12 +63,12 @@ var calcLeft = function(d){
     l = halfWidth - l;
   }
   
-  return {x : d.x/2, y : l};
+  return {x : (d.x/2-30), y : l};
 };
 
 var vis = d3.select("#chart").append("svg")
     .attr("width", width + margin.right + margin.left)
-    .attr("height", height + margin.top + margin.bottom)
+    .attr("height", 250 + margin.top + margin.bottom)
     .append("g")
     .attr("transform", "translate(" + margin.left + "," + margin.top + ")");
 
@@ -84,7 +83,7 @@ var toArray = function(item, arr){
   return arr;
 };
 
-d3.json("bracket.json", function(json) {
+d3.json("./json/bracket.json", function(json) {
   root = json;
   root.x0 = height / 2;
   root.y0 = width / 2;
@@ -103,9 +102,10 @@ d3.json("bracket.json", function(json) {
   update(root);
   socket.emit('steam info', steam_ids, function(steam_accounts){
     steamaccounts = steam_accounts;
-    console.log(steamaccounts);
   });
 });
+
+
 
 function update(source) {
   // Compute the new tree layout.
@@ -113,7 +113,6 @@ function update(source) {
 
   // Normalize for fixed-depth.
   nodes.forEach(function(d,i) { 
-    if(d.winner) console.log(d);
     //Diferentiate finalists nodes from other nodes
     if(d.finalist) {
       d.y = d.depth * 110 + halfWidth - 30;
@@ -143,7 +142,6 @@ function update(source) {
       .on("click",showAccountStats)
       .on("mouseover", function(d,i){ 
         steamacc = findInArrayOfJSONObjects(steamaccounts, d.steam_id);
-        console.log(steamacc);
         date = timeSince(new Date(steamacc.lastlogoff*1000));
 
         tooltip.style("visibility", "visible")
@@ -279,8 +277,7 @@ function update(source) {
   }
 
   function showAccountStats(d) {
-    socket.emit('get steam account info', d.steam_id, function(steam_info){
-    });
+    
   }
 
   function findInArrayOfJSONObjects(array,steam_id) {
@@ -290,4 +287,8 @@ function update(source) {
       }
     }
   }
+
+  socket.on('graph data', function(data){
+    console.log(data);
+  })
 }
