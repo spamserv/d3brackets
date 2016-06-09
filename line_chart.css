@@ -14,3 +14,8 @@ path {
 #graph {
   margin:auto;
 }
+
+.legend rect {
+  fill:white;
+  stroke:black;
+  opacity:0.8;}

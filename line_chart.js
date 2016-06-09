@@ -51,12 +51,14 @@ function draw_line_chart() {
       .attr("class", "line")
       .attr("id","dota_xpm")
       .attr("stroke","green")
+      .attr("data-legend",function(d) { return "exp/min";})
       .attr("d", valueline(dota_xpm));
 
   svg.append("path")
       .attr("class", "line")
       .attr("id","dota_gpm")
       .attr("stroke","#FFD700")
+      .attr("data-legend",function(d) { return "gold/min";})
       .attr("d", valueline(dota_gpm));
   // Add the X Axis
   svg.append("g")
@@ -68,4 +70,39 @@ function draw_line_chart() {
   svg.append("g")
       .attr("class", "y axis")
       .call(yLineAxis);
+
+  legend = svg.append("g")
+    .attr("class","legend")
+    .attr("transform","translate(450,150)")
+    .style("font-size","12px")
+    .call(d3.legend);
 }
+
+function updateChart(stats) {
+  dota_xpm = stats.dota_xpm;
+  dota_gpm = stats.dota_gpm;
+
+  // Scale the range of the dota_xpm
+  x.domain(d3.extent(dota_xpm, function(d,i) { return i; }));
+  y.domain([0, d3.max(dota_xpm, function(d) { return d; })]);
+
+  var svg = d3.select("#graph").transition();
+
+  svg.select("#dota_xpm")   // change the line
+      .duration(750)
+      .attr("d", valueline(dota_xpm));
+  svg.select("#dota_gpm")   // change the line
+      .duration(750)
+      .attr("d", valueline(dota_gpm));
+  svg.select(".x.axis") // change the x axis
+      .duration(750)
+      .call(xLineAxis);
+  svg.select(".y.axis") // change the y axis
+      .duration(750)
+      .call(yLineAxis);
+
+}
+
+
+
+

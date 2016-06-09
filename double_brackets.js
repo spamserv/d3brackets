@@ -142,20 +142,22 @@ function update(source) {
       .on("click",showAccountStats)
       .on("mouseover", function(d,i){ 
         steamacc = findInArrayOfJSONObjects(steamaccounts, d.steam_id);
-        date = timeSince(new Date(steamacc.lastlogoff*1000));
+        if(typeof steamacc !== 'undefined'){
+          date = timeSince(new Date(steamacc.lastlogoff*1000));
 
-        tooltip.style("visibility", "visible")
-          .select("img")
-          .attr("src", steamacc.avatarmedium);
+          tooltip.style("visibility", "visible")
+            .select("img")
+            .attr("src", steamacc.avatarmedium);
 
-        tooltip.select("#steam-personaname")
-          .text(steamacc.personaname);
+          tooltip.select("#steam-personaname")
+            .text(steamacc.personaname);
 
-        tooltip.select("#steam-id32")
-          .text(steamacc.steamid);
+          tooltip.select("#steam-id32")
+            .text(steamacc.steamid);
 
-        tooltip.select("#steam-last-login")
-          .text("Last login: " + date);
+          tooltip.select("#steam-last-login")
+            .text("Last login: " + date);
+        }
 
       })
       .on("mousemove", function(){
@@ -277,18 +279,26 @@ function update(source) {
   }
 
   function showAccountStats(d) {
-    
+    steamid = d.steam_id;
+    stats = findBySteamId(dota_stats.players, steamid);
+    console.log(stats);
+    updateChart(stats);  
   }
 
   function findInArrayOfJSONObjects(array,steam_id) {
-    for (x in array) {
-      if (array[x].steamid == steam_id) {
-          return array[x];
+    for (z in array) {
+      if (array[z].steamid == steam_id) return array[z];   
+    }
+  }
+
+  function findBySteamId(array, id) {
+    for(z in array) {
+      if(array[z].steamid == id) {
+        return array[z];
       }
     }
   }
 
-  socket.on('graph data', function(data){
-    console.log(data);
-  })
 }
+
+  
