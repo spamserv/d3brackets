@@ -215,7 +215,7 @@ function update(source) {
   link.enter().insert("path", "g")
       .attr("class", "link")
       .attr("d", diagonal)
-      .attr("data-steam-id",function(d) { console.log(d); return d.target.steam_id; });
+      .attr("data-steam-id",function(d) { return d.target.steam_id; });
 
   // Transition links to their new position.
   link.transition()
@@ -307,7 +307,6 @@ function update(source) {
 
     links = vis.select("path.link");
     nodes.forEach(function(d,i) { 
-      console.log(d);
       //Diferentiate finalists nodes from other nodes
       if(id == d.steam_id){
         //link = vis.select("path.link:nth-child("+(i+1)+")");
