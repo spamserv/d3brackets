@@ -24,6 +24,13 @@ path.hovered {
   stroke-width: 1.5px;
 }
 
+path.hovered-winner {
+  fill: none;
+  stroke: #76EE00;
+  stroke-width: 1.5px;
+
+}
+
 #chart {
   margin: auto;
 }

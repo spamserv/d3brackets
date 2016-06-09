@@ -145,10 +145,10 @@ function update(source) {
         if(typeof steamacc !== 'undefined'){
           date = timeSince(new Date(steamacc.lastlogoff*1000));
 
-          tooltip.style("visibility", "visible")
+          /*tooltip.style("visibility", "visible")
             .select("img")
             .attr("src", steamacc.avatarmedium);
-
+*/
           tooltip.select("#steam-personaname")
             .text(steamacc.personaname);
 
@@ -304,12 +304,18 @@ function update(source) {
   function onNodeHover(id) {
     var nodes = toArray(source);
     // Normalize for fixed-depth.
+
     links = vis.select("path.link");
     nodes.forEach(function(d,i) { 
+      console.log(d);
       //Diferentiate finalists nodes from other nodes
       if(id == d.steam_id){
         //link = vis.select("path.link:nth-child("+(i+1)+")");
         //link.attr("class","hovered");
+        if(d.winner)
+          vis.selectAll("path.link[data-steam-id='"+id+"']")
+          .attr("class","hovered-winner");
+
         vis.selectAll("path.link[data-steam-id='"+id+"']")
           .attr("class","hovered");
       }
