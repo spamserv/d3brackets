@@ -52,14 +52,13 @@ function draw_line_chart() {
       .attr("id","dota_xpm")
       .attr("stroke","green")
       .attr("data-legend",function(d) { return "exp/min";})
-      .attr("d", valueline(dota_xpm));
 
   svg.append("path")
       .attr("class", "line")
       .attr("id","dota_gpm")
       .attr("stroke","#FFD700")
       .attr("data-legend",function(d) { return "gold/min";})
-      .attr("d", valueline(dota_gpm));
+
   // Add the X Axis
   svg.append("g")
       .attr("class", "x axis")

@@ -157,13 +157,15 @@ function update(source) {
 
           tooltip.select("#steam-last-login")
             .text("Last login: " + date);
+
+          onNodeHover(steamacc.steamid);
         }
 
       })
       .on("mousemove", function(){
         return tooltip.style("top", (d3.event.pageY-10)+"px").style("left",(d3.event.pageX+10)+"px");
       })
-      .on("mouseout", function(){return tooltip.style("visibility", "hidden");});
+      .on("mouseout", function(){ onNodeUnhover(); return tooltip.style("visibility", "hidden");});
 
   nodeEnter.append("rect")
       .attr("transform", "translate("+(-half_rec_width)+","+(-half_rec_height)+")")
@@ -212,7 +214,8 @@ function update(source) {
   // Enter any new links at the parent's previous position.
   link.enter().insert("path", "g")
       .attr("class", "link")
-      .attr("d", diagonal);
+      .attr("d", diagonal)
+      .attr("data-steam-id",function(d) { console.log(d); return d.target.steam_id; });
 
   // Transition links to their new position.
   link.transition()
@@ -281,7 +284,6 @@ function update(source) {
   function showAccountStats(d) {
     steamid = d.steam_id;
     stats = findBySteamId(dota_stats.players, steamid);
-    console.log(stats);
     updateChart(stats);  
   }
 
@@ -297,6 +299,26 @@ function update(source) {
         return array[z];
       }
     }
+  }
+
+  function onNodeHover(id) {
+    var nodes = toArray(source);
+    // Normalize for fixed-depth.
+    links = vis.select("path.link");
+    nodes.forEach(function(d,i) { 
+      //Diferentiate finalists nodes from other nodes
+      if(id == d.steam_id){
+        //link = vis.select("path.link:nth-child("+(i+1)+")");
+        //link.attr("class","hovered");
+        vis.selectAll("path.link[data-steam-id='"+id+"']")
+          .attr("class","hovered");
+      }
+    });
+  }
+
+  function onNodeUnhover() {
+    // Normalize for fixed-depth.
+    vis.selectAll("path").attr("class","link");
   }
 
 }

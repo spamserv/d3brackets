@@ -18,13 +18,18 @@ path.link {
   stroke-width: 1.5px;
 }
 
+path.hovered {
+  fill: none;
+  stroke: #ff0000;
+  stroke-width: 1.5px;
+}
+
 #chart {
   margin: auto;
 }
 
 #tooltip {
   position: absolute;
-  z-index: 10;
   visibility: hidden;
   height: 150px;
   width: 350px;
