@@ -68,7 +68,7 @@ var calcLeft = function(d){
 
 var vis = d3.select("#chart").append("svg")
     .attr("width", width + margin.right + margin.left)
-    .attr("height", 250 + margin.top + margin.bottom)
+    .attr("height", 220 + margin.top + margin.bottom)
     .append("g")
     .attr("transform", "translate(" + margin.left + "," + margin.top + ")");
 
