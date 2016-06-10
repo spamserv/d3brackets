@@ -102,6 +102,18 @@ d3.json("./json/bracket.json", function(json) {
   update(root);
   socket.emit('steam info', steam_ids, function(steam_accounts){
     steamaccounts = steam_accounts;
+
+    var nodes = toArray(root);
+
+    links = vis.select("path.link");
+    all_nodes = d3.selectAll("g.node");
+    for(var i=0;i<all_nodes[0].length;i++) {
+      var id = d3.select(all_nodes[0][i]).select("text.steam-id").text();
+      var acc = findInArrayOfJSONObjects(steamaccounts, id);
+      d3.select(all_nodes[0][i]).select("text.name").text(acc.personaname);
+    }
+
+    
   });
 });
 
@@ -143,21 +155,6 @@ function update(source) {
       .on("mouseover", function(d,i){ 
         steamacc = findInArrayOfJSONObjects(steamaccounts, d.steam_id);
         if(typeof steamacc !== 'undefined'){
-          date = timeSince(new Date(steamacc.lastlogoff*1000));
-
-          /*tooltip.style("visibility", "visible")
-            .select("img")
-            .attr("src", steamacc.avatarmedium);
-*/
-          tooltip.select("#steam-personaname")
-            .text(steamacc.personaname);
-
-          tooltip.select("#steam-id32")
-            .text(steamacc.steamid);
-
-          tooltip.select("#steam-last-login")
-            .text("Last login: " + date);
-
           onNodeHover(steamacc.steamid);
         }
 
@@ -165,7 +162,7 @@ function update(source) {
       .on("mousemove", function(){
         return tooltip.style("top", (d3.event.pageY-10)+"px").style("left",(d3.event.pageX+10)+"px");
       })
-      .on("mouseout", function(){ onNodeUnhover(); return tooltip.style("visibility", "hidden");});
+      .on("mouseout", function(){ onNodeUnhover(); });
 
   nodeEnter.append("rect")
       .attr("transform", "translate("+(-half_rec_width)+","+(-half_rec_height)+")")
@@ -176,6 +173,7 @@ function update(source) {
   nodeEnter.append("text")
       .attr("dy", 3)
       .attr("text-anchor", "middle")
+      .attr("class","name")
       .text(function(d) { return d.name; })
       .style("fill-opacity", 1e-6)
 
@@ -285,12 +283,32 @@ function update(source) {
     steamid = d.steam_id;
     stats = findBySteamId(dota_stats.players, steamid);
     updateChart(stats);  
-  }
 
-  function findInArrayOfJSONObjects(array,steam_id) {
-    for (z in array) {
-      if (array[z].steamid == steam_id) return array[z];   
+    steamacc = findInArrayOfJSONObjects(steamaccounts, steamid);
+    date = timeSince(new Date(steamacc.lastlogoff*1000));
+    created = timeSince(new Date(steamacc.timecreated*1000));
+
+    tooltip.style("visibility", "visible")
+      .select("img")
+      .attr("src", steamacc.avatarfull);
+    tooltip.select("#steam-personaname")
+      .text(steamacc.personaname);
+
+    tooltip.select("#steam-id32")
+      .text("ID: "+steamacc.steamid);
+
+    tooltip.select("#steam-last-login")
+      .text("Last login: " + date);
+
+    if(steamacc.timecreated != undefined) {
+    tooltip.select("#steam-created")
+      .text("Account created: " + created);
+    } else {
+      created = "Unknown";
+      tooltip.select("#steam-created")
+      .text("Account created: " + created);
     }
+
   }
 
   function findBySteamId(array, id) {
@@ -303,14 +321,11 @@ function update(source) {
 
   function onNodeHover(id) {
     var nodes = toArray(source);
-    // Normalize for fixed-depth.
 
     links = vis.select("path.link");
     nodes.forEach(function(d,i) { 
       //Diferentiate finalists nodes from other nodes
       if(id == d.steam_id){
-        //link = vis.select("path.link:nth-child("+(i+1)+")");
-        //link.attr("class","hovered");
         if(d.winner)
           vis.selectAll("path.link[data-steam-id='"+id+"']")
           .attr("class","hovered-winner");
@@ -322,10 +337,15 @@ function update(source) {
   }
 
   function onNodeUnhover() {
-    // Normalize for fixed-depth.
     vis.selectAll("path").attr("class","link");
   }
 
+}
+
+function findInArrayOfJSONObjects(array,steam_id) {
+  for (z in array) {
+    if (array[z].steamid == steam_id) return array[z];   
+  }
 }
 
   

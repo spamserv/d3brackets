@@ -100,6 +100,8 @@ function updateChart(stats) {
       .duration(750)
       .call(yLineAxis);
 
+  d3.select("#graph").attr("style","display:block;");
+
 }
 
 
