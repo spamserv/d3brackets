@@ -1,4 +1,4 @@
-var socket = io('http://localhost:8081');
+var socket = io('http://d3brackets.herokuapp.com/');
 var margin = {top: 30, right: 10, bottom: 10, left: 10},
     width = 1060 - margin.left - margin.right,
     halfWidth = width / 2,

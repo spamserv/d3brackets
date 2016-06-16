@@ -13,7 +13,15 @@ var steamClient = new steam({
 
 var steam_timestamp = "76561197960265728";
 
+server = require('http').createServer(app);
 io = require('socket.io').listen(server);
+
+server.listen(process.env.PORT || 5000);
+
+app.get('/', function (req, res) {
+      res.header('Content-type', 'text/html');
+      return res.end('<h1>Hello, Secure World!</h1>');
+});
 
 io.on('connection', function (socket){
 	console.log('connected');
