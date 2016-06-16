@@ -295,18 +295,18 @@ function update(source) {
       .text(steamacc.personaname);
 
     tooltip.select("#steam-id32")
-      .text("ID: "+steamacc.steamid);
+      .text(steamacc.steamid);
 
     tooltip.select("#steam-last-login")
-      .text("Last login: " + date);
+      .text(date);
 
     if(steamacc.timecreated != undefined) {
     tooltip.select("#steam-created")
-      .text("Account created: " + created);
+      .text(created);
     } else {
       created = "Unknown";
       tooltip.select("#steam-created")
-      .text("Account created: " + created);
+      .text(created);
     }
 
   }
