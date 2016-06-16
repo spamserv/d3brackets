@@ -20,7 +20,7 @@ var yLineAxis = d3.svg.axis().scale(y)
 
 // Define the line
 var valueline = d3.svg.line()
-    .x(function(d,i) { return x(i); })
+    .x(function(d,i) { return x(i+1); })
     .y(function(d) { return y(d); });
     
 // Adds the svg canvas
@@ -82,7 +82,7 @@ function updateChart(stats) {
   dota_gpm = stats.dota_gpm;
 
   // Scale the range of the dota_xpm
-  x.domain(d3.extent(dota_xpm, function(d,i) { return i; }));
+  x.domain(d3.extent(dota_xpm, function(d,i) { return (i+1); }));
   y.domain([0, d3.max(dota_xpm, function(d) { return d; })]);
 
   var svg = d3.select("#graph").transition();
