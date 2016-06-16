@@ -227,20 +227,6 @@ function update(source) {
     d.y0 = p.y;
   });
 
-
-  
-  // Toggle children on click.
-  function click(d) {
-    if (d.children) {
-      d._children = d.children;
-      d.children = null;
-    } else {
-      d.children = d._children;
-      d._children = null;
-    }
-    update(source);
-  }
-
   function timeSince(date) {
     var seconds = Math.floor((new Date() - date) / 1000);
 
