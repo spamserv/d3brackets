@@ -220,17 +220,6 @@ function update(source) {
       .duration(duration)
       .attr("d", connector);
 
-  // Transition exiting nodes to the parent's new position.
-  link.exit().transition()
-      .duration(duration)
-      .attr("d", function(d) {
-        var o = calcLeft(d.source||source);
-        if(d.source.isRight) o.y -= halfWidth - (d.target.y - d.source.y);
-        else o.y += halfWidth - (d.target.y - d.source.y);
-        return connector({source: o, target: o});
-      })
-      .remove();
-
   // Stash the old positions for transition.
   nodes.forEach(function(d) {
     var p = calcLeft(d);
