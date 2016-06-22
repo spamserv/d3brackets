@@ -6,9 +6,10 @@ path {
 .axis path,
 .axis line {
     fill: none;
-    stroke: grey;
+    stroke: white;
     stroke-width: 1;
     shape-rendering: crispEdges;
+
 }
 
 #graph {

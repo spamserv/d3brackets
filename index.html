@@ -3,14 +3,16 @@
 <head>
 	<meta http-equiv="Content-Type" content="text/html;charset=utf-8">
 	<title>Node-Link Tree</title>
-	<script src="http://d3js.org/d3.v2.js"></script>
+	<script src="//d3js.org/d3.v3.min.js"></script>
 	<link rel="stylesheet" type="text/css" href="double_brackets.css">
-	<link rel="stylesheet" type="text/css" href="line_chart.css">
+	<link rel="stylesheet" type="text/css" href="bar_chart.css">
 </head>
 <body>
 
 <center>
-	<div id="chart"></div>
+	<div class="container-class">
+		<div id="chart"></div>
+	</div>
 	<div class="container">		
 		<div id="tooltip">
 			<div id="steam-img"><img src=""></div>
@@ -21,14 +23,14 @@
 				<div>Last Login: <span id="steam-last-login"></div>
 			</div>			
 		</div>
-		<div id="graph" style="display:none;"></div>
+		<div id="graph"></div>
+		<div id="bar-chart"></div>
 	</div>
 </center>
 
 <script src="node_modules/socket.io/node_modules/socket.io-client/socket.io.js"></script>
-<script type="text/javascript" src="line_chart.js"></script>
+<script type="text/javascript" src="bar_chart.js"></script>
 <script type="text/javascript" src="double_brackets.js"></script>
-<script type="text/javascript" src="d3legend.js"></script>
 
 </body>
 </html>

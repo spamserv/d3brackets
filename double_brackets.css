@@ -4,7 +4,7 @@
 }
 
 .node rect {
-  fill: black;
+  fill: #049CCF;
   stroke: black;
   stroke-width: 1.5px;
 }
@@ -14,19 +14,19 @@
 
 path.link {
   fill: none;
-  stroke: #ccc;
+  stroke: #000;
   stroke-width: 1.5px;
 }
 
 path.hovered {
   fill: none;
-  stroke: #ff0000;
+  stroke: #AB0909;
   stroke-width: 1.5px;
 }
 
 path.hovered-winner {
   fill: none;
-  stroke: #009900;
+  stroke: #258028;
   stroke-width: 1.5px;
 
 }
@@ -68,7 +68,7 @@ path.hovered-winner {
   height:184px;
   width:184px;
   border-radius: 10px;
-  border: 2px solid #88818A;
+  border: 2px solid white;
   margin-right:5px;
 }
 
@@ -93,4 +93,22 @@ img {
   position:relative;
   font-size:16px;
   font-family:myfont;
+}
+
+body {
+/* Permalink - use to edit and share this gradient: http://colorzilla.com/gradient-editor/#77d1dd+0,207ca0+100 */
+background: #77d1dd; /* Old browsers */
+background: -moz-radial-gradient(center, ellipse cover,  #77d1dd 0%, #207ca0 100%); /* FF3.6-15 */
+background: -webkit-radial-gradient(center, ellipse cover,  #77d1dd 0%,#207ca0 100%); /* Chrome10-25,Safari5.1-6 */
+background: radial-gradient(ellipse at center,  #77d1dd 0%,#207ca0 100%); /* W3C, IE10+, FF16+, Chrome26+, Opera12+, Safari7+ */
+filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#77d1dd', endColorstr='#207ca0',GradientType=1 ); /* IE6-9 fallback on horizontal gradient */
+color:white;
+}
+
+text.name {
+  color:white;
+}
+
+.container-class {
+  margin-top: 100px;
 }

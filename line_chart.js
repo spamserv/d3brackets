@@ -50,13 +50,13 @@ function draw_line_chart() {
   svg.append("path")
       .attr("class", "line")
       .attr("id","dota_xpm")
-      .attr("stroke","green")
+      .attr("stroke","#258028")
       .attr("data-legend",function(d) { return "exp/min";})
 
   svg.append("path")
       .attr("class", "line")
       .attr("id","dota_gpm")
-      .attr("stroke","#FFD700")
+      .attr("stroke","#AB0909")
       .attr("data-legend",function(d) { return "gold/min";})
 
   // Add the X Axis
@@ -99,6 +99,8 @@ function updateChart(stats) {
   svg.select(".y.axis") // change the y axis
       .duration(750)
       .call(yLineAxis);
+
+  
 
   d3.select("#graph").attr("style","display:block;");
 

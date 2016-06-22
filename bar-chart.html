@@ -1,0 +1,113 @@
+<!DOCTYPE html>
+<meta charset="utf-8">
+
+<head>
+	<style>
+
+	.axis {
+	  font: 10px sans-serif;
+	}
+
+	.axis path,
+	.axis line {
+	  fill: none;
+	  stroke: #000;
+	  shape-rendering: crispEdges;
+	}
+
+	</style>
+</head>
+
+<body>
+
+<script src="//d3js.org/d3.v3.min.js"></script>
+
+<script>
+var dota_stats;
+var margin = {top: 20, right: 20, bottom: 70, left: 40},
+    width = 600 - margin.left - margin.right,
+    height = 300 - margin.top - margin.bottom;
+
+// Parse the date / time
+var	parseDate = d3.time.format("%Y-%m").parse;
+
+var xBarChart = d3.scale.ordinal().rangeRoundBands([0, width], .05);
+
+var yBarChart = d3.scale.linear().range([height, 0]);
+
+var xBarAxis = d3.svg.axis()
+    .scale(xBarChart)
+    .orient("bottom")
+    .tickFormat(d3.time.format("%Y-%m-%d"));
+
+var yBarAxis = d3.svg.axis()
+    .scale(yBarChart)
+    .orient("left")
+    .ticks(10);
+
+var svg = d3.select("body").append("svg")
+    .attr("width", width + margin.left + margin.right)
+    .attr("height", height + margin.top + margin.bottom)
+  .append("g")
+    .attr("transform", 
+          "translate(" + margin.left + "," + margin.top + ")");
+
+d3.json("./json/dota_stats.json", function(json) {
+  console.log(json);
+  dota_stats = json;
+  draw_bar_chart();
+});
+
+
+function draw_bar_chart() {
+  console.log(dota_stats);
+  dota_xpm = dota_stats.players[0].dota_xpm;
+  dota_gpm = dota_stats.players[0].dota_gpm;
+  dates = dota_stats.players[0].dates;
+
+  var data = {};
+  data.dota_xpm = dota_xpm;
+  data.dota_gpm = dota_gpm;
+  data.dates = dates;
+  
+  for(var i=0; i<data.dates.length;i++){
+      data.dates[i] = new Date(data.dates[i]);
+  }
+	
+  xBarChart.domain(data.dates.map(function(d,i) { return d; }));
+  yBarChart.domain([0, d3.max(dota_xpm, function(d) { return d; })]);
+
+  svg.append("g")
+      .attr("class", "x axis")
+      .attr("transform", "translate(0," + height + ")")
+      .call(xBarAxis)
+    .selectAll("text")
+      .style("text-anchor", "end")
+      .attr("dx", "-.8em")
+      .attr("dy", "-.55em")
+      .attr("transform", "rotate(-90)" );
+
+  svg.append("g")
+      .attr("class", "y axis")
+      .call(yBarAxis)
+    .append("text")
+      .attr("transform", "rotate(-90)")
+      .attr("y", 6)
+      .attr("dy", ".71em")
+      .style("text-anchor", "end")
+      .text("Value ($)");
+
+  svg.selectAll("bar")
+      .data(dota_gpm)
+    .enter().append("rect")
+      .style("fill", "steelblue")
+      .attr("x", function(d,i) { return xBarChart(dates[i]); })
+      .attr("width", xBarChart.rangeBand())
+      .attr("y", function(d) { console.log(d);return yBarChart(d); })
+      .attr("height", function(d) { return height - yBarChart(d); });
+}
+
+
+</script>
+
+</body>
